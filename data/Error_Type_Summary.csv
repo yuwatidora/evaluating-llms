@@ -1,0 +1,16 @@
+Error Type,Count,% of Total functions
+object,13,8%
+invalid,10,6%
+'int',6,4%
+unterminated,6,4%
+unexpected,5,3%
+integer,3,2%
+list,3,2%
+negative,3,2%
+Solution(),3,2%
+'str',2,1%
+'r',1,1%
+'x',1,1%
+string,1,1%
+Structural error,109,66%
+Total,166,100%
