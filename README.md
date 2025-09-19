@@ -33,13 +33,7 @@ This repository contains materials for evaluating large language models (LLMs) i
     python -m venv venv
     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
     ```
-
-3. Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Launch Jupyter Notebook:
+3. Launch Jupyter Notebook:
     ```bash
     jupyter notebook
     ```
@@ -54,12 +48,47 @@ This repository contains materials for evaluating large language models (LLMs) i
 
 ```
 .
-├── prompts/             # Example prompts for LLMs
-├── evaluation/          # Notebooks and scripts for evaluating generated code
-├── data/                # Sample input/output data (if any)
-├── requirements.txt     # Python dependencies
-└── README.md            # Project overview
+├── analysis/                # analyzing data, data cleaning, and data exploration
+├── data/                    # Sample input/output data (if any)
+├── OpenAI_Prompting.ipynb   # prompts, output parsing and evaluation
+└── README.md                # Project overview
 ```
+## Evaluation Method
+
+The evaluation of LLM-generated code in this project is conducted in several structured steps:
+
+1. **Parsing Instructions and Outputs**
+    - Each prompt (instruction) and the corresponding model-generated output are parsed:
+        - The instruction is analyzed to extract input parameters and the expected output.
+        - The model output is scanned for Python code blocks.
+
+2. **Code Extraction**
+    - The extracted code is isolated from the model’s output using regular expressions, focusing on code blocks demarcated with ```python ... ``` or similar markers.
+
+3. **Automated Code Execution**
+    - Each extracted code snippet is executed in a sandboxed subprocess using the parsed input parameters.
+    - The execution is strictly time-limited to avoid infinite loops or long runtimes (e.g., a 2-second timeout).
+    - Only the function defined in the generated code is called, using the input parameters parsed from the instruction.
+
+4. **Output Comparison**
+    - The output produced by the code is compared to the expected output from the instruction.
+    - Comparison is type-aware:
+        - Strings are normalized (case, whitespace).
+        - Lists and dictionaries are compared structurally.
+        - Booleans and numbers are compared by value.
+
+5. **Error Handling**
+    - If the code execution results in an error (exceptions, timeouts, or missing code), this is logged.
+    - These cases are counted as failures in the final evaluation.
+
+6. **Aggregation and Reporting**
+    - For each prompt/code pair, the result is categorized as:
+        - **Correct** (output matches expected)
+        - **Incorrect** (output does not match)
+        - **Error** (exception, timeout, or unparsable code)
+    - The overall proportion of correct, incorrect, and error cases is summarized to assess the LLM’s code generation accuracy.
+
+This method enables large-scale, fully automated, and reproducible benchmarking of code-generation capabilities of LLMs by directly testing generated code against expected results in a controlled environment.
 
 ## Findings
 
